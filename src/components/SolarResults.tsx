@@ -6,6 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Sun, DollarSign, Zap, Home, TrendingUp, Calculator } from "lucide-react";
 import SavingsChart from "./SavingsChart";
 import IncentivesSection from "./IncentivesSection";
+import VendorsSection from "./VendorsSection";
+import MapView from "./MapView";
 
 interface SolarResultsProps {
   address: string;
@@ -131,6 +133,16 @@ const SolarResults = ({ address, onBack }: SolarResultsProps) => {
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
           <SavingsChart />
           <IncentivesSection />
+        </div>
+
+        {/* Map and Vendors Section */}
+        <div className="grid lg:grid-cols-3 gap-8 mb-8">
+          <div className="lg:col-span-1">
+            <MapView address={address} />
+          </div>
+          <div className="lg:col-span-2">
+            <VendorsSection />
+          </div>
         </div>
 
         {/* Recommendation */}

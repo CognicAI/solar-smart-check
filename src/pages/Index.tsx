@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Sun, DollarSign, Zap, TrendingUp, Search } from "lucide-react";
+import { MapPin, Sun, DollarSign, Zap, TrendingUp, Search, Locate } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import SolarResults from "@/components/SolarResults";
 import { toast } from "@/hooks/use-toast";
@@ -12,12 +12,72 @@ const Index = () => {
   const [address, setAddress] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
+
+  const handleGetCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      toast({
+        title: "Location Not Supported",
+        description: "Your browser doesn't support location services.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLocationLoading(true);
+    
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        
+        try {
+          // Using reverse geocoding to get address from coordinates
+          // In a real app, you'd use Google Maps Geocoding API here
+          const response = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+          );
+          const data = await response.json();
+          
+          const formattedAddress = `${data.locality}, ${data.principalSubdivision}, ${data.countryName}`;
+          setAddress(formattedAddress);
+          
+          toast({
+            title: "Location Found",
+            description: "Your current location has been detected successfully.",
+          });
+        } catch (error) {
+          console.error("Error fetching location details:", error);
+          toast({
+            title: "Location Error",
+            description: "Could not fetch location details. Please try again.",
+            variant: "destructive",
+          });
+        } finally {
+          setLocationLoading(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        setLocationLoading(false);
+        toast({
+          title: "Location Access Denied",
+          description: "Please allow location access or enter your address manually.",
+          variant: "destructive",
+        });
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  };
 
   const handleAnalyze = async () => {
     if (!address.trim()) {
       toast({
         title: "Address Required",
-        description: "Please enter your address to analyze solar potential.",
+        description: "Please enter your address or use current location to analyze solar potential.",
         variant: "destructive",
       });
       return;
@@ -67,31 +127,54 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-3">
-                  <Input
-                    placeholder="123 Main Street, City, State"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    className="text-lg py-6 border-2 focus:border-orange-400"
-                    onKeyPress={(e) => e.key === "Enter" && handleAnalyze()}
-                  />
-                  <Button
-                    onClick={handleAnalyze}
-                    disabled={loading}
-                    className="px-8 py-6 text-lg bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 shadow-lg hover:shadow-xl transition-all duration-200"
-                  >
-                    {loading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Analyzing...
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <Search className="h-5 w-5" />
-                        Analyze
-                      </div>
-                    )}
-                  </Button>
+                <div className="space-y-3">
+                  <div className="flex gap-3">
+                    <Input
+                      placeholder="123 Main Street, City, State"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      className="text-lg py-6 border-2 focus:border-orange-400"
+                      onKeyPress={(e) => e.key === "Enter" && handleAnalyze()}
+                    />
+                    <Button
+                      onClick={handleAnalyze}
+                      disabled={loading}
+                      className="px-8 py-6 text-lg bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 shadow-lg hover:shadow-xl transition-all duration-200"
+                    >
+                      {loading ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Analyzing...
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Search className="h-5 w-5" />
+                          Analyze
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+                  
+                  <div className="flex justify-center">
+                    <Button
+                      variant="outline"
+                      onClick={handleGetCurrentLocation}
+                      disabled={locationLoading}
+                      className="flex items-center gap-2 border-2 border-blue-200 hover:border-blue-300 text-blue-700 hover:text-blue-800"
+                    >
+                      {locationLoading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                          Getting Location...
+                        </>
+                      ) : (
+                        <>
+                          <Locate className="h-4 w-4" />
+                          Use Current Location
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

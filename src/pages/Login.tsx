@@ -62,7 +62,7 @@ const Login = ({ onLogin }: LoginProps) => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!registerForm.firstName || !registerForm.email || !registerForm.password) {
+    if (!registerForm.firstName || !registerForm.email || !registerForm.phone || !registerForm.password) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -186,7 +186,7 @@ const Login = ({ onLogin }: LoginProps) => {
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
+                      <Label htmlFor="firstName">First Name *</Label>
                       <Input
                         id="firstName"
                         placeholder="John"
@@ -207,7 +207,7 @@ const Login = ({ onLogin }: LoginProps) => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="registerEmail">Email</Label>
+                    <Label htmlFor="registerEmail">Email *</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
@@ -223,7 +223,7 @@ const Login = ({ onLogin }: LoginProps) => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
+                    <Label htmlFor="phone">Phone Number *</Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
@@ -233,6 +233,7 @@ const Login = ({ onLogin }: LoginProps) => {
                         className="pl-10"
                         value={registerForm.phone}
                         onChange={(e) => setRegisterForm({...registerForm, phone: e.target.value})}
+                        required
                       />
                     </div>
                   </div>
@@ -283,7 +284,7 @@ const Login = ({ onLogin }: LoginProps) => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="registerPassword">Password</Label>
+                    <Label htmlFor="registerPassword">Password *</Label>
                     <Input
                       id="registerPassword"
                       type="password"
@@ -295,7 +296,7 @@ const Login = ({ onLogin }: LoginProps) => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <Label htmlFor="confirmPassword">Confirm Password *</Label>
                     <Input
                       id="confirmPassword"
                       type="password"

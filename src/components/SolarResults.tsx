@@ -3,11 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Sun, DollarSign, Zap, Home, TrendingUp, Calculator } from "lucide-react";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ArrowLeft, Sun, DollarSign, Zap, Home, TrendingUp, Calculator, ChevronDown, Map, Users, Gift } from "lucide-react";
 import SavingsChart from "./SavingsChart";
 import IncentivesSection from "./IncentivesSection";
 import VendorsSection from "./VendorsSection";
 import MapView from "./MapView";
+import { useState } from "react";
 
 interface SolarResultsProps {
   address: string;
@@ -15,6 +22,8 @@ interface SolarResultsProps {
 }
 
 const SolarResults = ({ address, onBack }: SolarResultsProps) => {
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  
   // Mock data - in real app this would come from API
   const solarScore = 87;
   const annualSavings = 1420;
@@ -22,6 +31,36 @@ const SolarResults = ({ address, onBack }: SolarResultsProps) => {
   const recommendedPanels = 18;
   const roofArea = 1200;
   const systemSize = 7.2;
+
+  const renderAdditionalSection = () => {
+    switch (activeSection) {
+      case 'savings':
+        return (
+          <div className="mt-8">
+            <SavingsChart />
+          </div>
+        );
+      case 'incentives':
+        return (
+          <div className="mt-8">
+            <IncentivesSection />
+          </div>
+        );
+      case 'vendors':
+        return (
+          <div className="grid lg:grid-cols-3 gap-8 mt-8">
+            <div className="lg:col-span-1">
+              <MapView address={address} />
+            </div>
+            <div className="lg:col-span-2">
+              <VendorsSection />
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-blue-50">
@@ -129,21 +168,55 @@ const SolarResults = ({ address, onBack }: SolarResultsProps) => {
           </Card>
         </div>
 
-        {/* Charts and Details */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-8">
-          <SavingsChart />
-          <IncentivesSection />
+        {/* Additional Information Dropdown */}
+        <div className="mb-8">
+          <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-xl">Additional Information</CardTitle>
+                  <CardDescription>
+                    Explore detailed projections, incentives, and local vendors
+                  </CardDescription>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="flex items-center gap-2">
+                      View Details
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56 bg-white border shadow-lg z-50">
+                    <DropdownMenuItem 
+                      onClick={() => setActiveSection(activeSection === 'savings' ? null : 'savings')}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <TrendingUp className="h-4 w-4" />
+                      25-Year Savings Projection
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => setActiveSection(activeSection === 'incentives' ? null : 'incentives')}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <Gift className="h-4 w-4" />
+                      Available Incentives
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => setActiveSection(activeSection === 'vendors' ? null : 'vendors')}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <Users className="h-4 w-4" />
+                      Solar Panel Vendors & Map
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </CardHeader>
+          </Card>
         </div>
 
-        {/* Map and Vendors Section */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-8">
-          <div className="lg:col-span-1">
-            <MapView address={address} />
-          </div>
-          <div className="lg:col-span-2">
-            <VendorsSection />
-          </div>
-        </div>
+        {/* Dynamic Additional Section */}
+        {renderAdditionalSection()}
 
         {/* Recommendation */}
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">

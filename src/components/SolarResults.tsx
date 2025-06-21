@@ -22,7 +22,7 @@ interface SolarResultsProps {
 }
 
 const SolarResults = ({ address, onBack }: SolarResultsProps) => {
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [activeSections, setActiveSections] = useState<string[]>([]);
   
   // Mock data - in real app this would come from API
   const solarScore = 87;
@@ -32,8 +32,22 @@ const SolarResults = ({ address, onBack }: SolarResultsProps) => {
   const roofArea = 1200;
   const systemSize = 7.2;
 
-  const renderAdditionalSection = () => {
-    switch (activeSection) {
+  const toggleSection = (section: string) => {
+    setActiveSections(prev => 
+      prev.includes(section) 
+        ? prev.filter(s => s !== section)
+        : [...prev, section]
+    );
+  };
+
+  const closeSection = (section: string) => {
+    setActiveSections(prev => prev.filter(s => s !== section));
+  };
+
+  const renderAdditionalSection = (section: string) => {
+    if (!activeSections.includes(section)) return null;
+
+    switch (section) {
       case 'savings':
         return (
           <div className="mt-8">
@@ -51,7 +65,7 @@ const SolarResults = ({ address, onBack }: SolarResultsProps) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setActiveSection(null)}
+                  onClick={() => closeSection('savings')}
                   className="h-8 w-8"
                 >
                   <X className="h-4 w-4" />
@@ -80,7 +94,7 @@ const SolarResults = ({ address, onBack }: SolarResultsProps) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setActiveSection(null)}
+                  onClick={() => closeSection('incentives')}
                   className="h-8 w-8"
                 >
                   <X className="h-4 w-4" />
@@ -109,7 +123,7 @@ const SolarResults = ({ address, onBack }: SolarResultsProps) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setActiveSection(null)}
+                  onClick={() => closeSection('vendors')}
                   className="h-8 w-8"
                 >
                   <X className="h-4 w-4" />
@@ -259,21 +273,21 @@ const SolarResults = ({ address, onBack }: SolarResultsProps) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56 bg-white border shadow-lg z-50">
                     <DropdownMenuItem 
-                      onClick={() => setActiveSection(activeSection === 'savings' ? null : 'savings')}
+                      onClick={() => toggleSection('savings')}
                       className="flex items-center gap-2 cursor-pointer"
                     >
                       <TrendingUp className="h-4 w-4" />
                       25-Year Savings Projection
                     </DropdownMenuItem>
                     <DropdownMenuItem 
-                      onClick={() => setActiveSection(activeSection === 'incentives' ? null : 'incentives')}
+                      onClick={() => toggleSection('incentives')}
                       className="flex items-center gap-2 cursor-pointer"
                     >
                       <Gift className="h-4 w-4" />
                       Available Incentives
                     </DropdownMenuItem>
                     <DropdownMenuItem 
-                      onClick={() => setActiveSection(activeSection === 'vendors' ? null : 'vendors')}
+                      onClick={() => toggleSection('vendors')}
                       className="flex items-center gap-2 cursor-pointer"
                     >
                       <Users className="h-4 w-4" />
@@ -286,8 +300,10 @@ const SolarResults = ({ address, onBack }: SolarResultsProps) => {
           </Card>
         </div>
 
-        {/* Dynamic Additional Section */}
-        {renderAdditionalSection()}
+        {/* Dynamic Additional Sections */}
+        {renderAdditionalSection('savings')}
+        {renderAdditionalSection('incentives')}
+        {renderAdditionalSection('vendors')}
 
         {/* Recommendation */}
         <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">

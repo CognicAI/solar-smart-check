@@ -1,15 +1,19 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Sun, DollarSign, Zap, TrendingUp, Search, Locate } from "lucide-react";
+import { MapPin, Sun, DollarSign, Zap, TrendingUp, Search, Locate, LogOut, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import SolarResults from "@/components/SolarResults";
 import { toast } from "@/hooks/use-toast";
 
-const Index = () => {
-  const [address, setAddress] = useState("");
+interface IndexProps {
+  user: any;
+  onLogout: () => void;
+}
+
+const Index = ({ user, onLogout }: IndexProps) => {
+  const [address, setAddress] = useState(user?.address || "");
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
@@ -97,8 +101,32 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-blue-50">
+      {/* Header with User Info */}
+      <div className="container mx-auto px-4 pt-6">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-full flex items-center justify-center">
+              <User className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <p className="font-semibold text-gray-900">Welcome back, {user?.name || 'User'}!</p>
+              <p className="text-sm text-gray-600">{user?.email}</p>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            onClick={onLogout}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
+        </div>
+      </div>
+
       {/* Hero Section */}
-      <div className="container mx-auto px-4 pt-12 pb-20">
+      <div className="container mx-auto px-4 pb-20">
+        
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 mb-6 shadow-sm">
             <Sun className="h-5 w-5 text-orange-500" />
@@ -181,6 +209,7 @@ const Index = () => {
           </div>
         </div>
 
+        
         {/* Features Grid */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-105">

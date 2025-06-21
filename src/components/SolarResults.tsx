@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowLeft, Sun, DollarSign, Zap, Home, TrendingUp, Calculator, ChevronDown, Map, Users, Gift } from "lucide-react";
+import { ArrowLeft, Sun, DollarSign, Zap, Home, TrendingUp, Calculator, ChevronDown, Map, Users, Gift, X } from "lucide-react";
 import SavingsChart from "./SavingsChart";
 import IncentivesSection from "./IncentivesSection";
 import VendorsSection from "./VendorsSection";
@@ -37,24 +37,95 @@ const SolarResults = ({ address, onBack }: SolarResultsProps) => {
       case 'savings':
         return (
           <div className="mt-8">
-            <SavingsChart />
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-blue-600" />
+                    25-Year Savings Projection
+                  </CardTitle>
+                  <CardDescription>
+                    Long-term financial benefits of solar installation
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setActiveSection(null)}
+                  className="h-8 w-8"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <SavingsChart />
+              </CardContent>
+            </Card>
           </div>
         );
       case 'incentives':
         return (
           <div className="mt-8">
-            <IncentivesSection />
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Gift className="h-5 w-5 text-green-600" />
+                    Available Incentives
+                  </CardTitle>
+                  <CardDescription>
+                    Federal, state, and local solar incentives for your area
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setActiveSection(null)}
+                  className="h-8 w-8"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <IncentivesSection />
+              </CardContent>
+            </Card>
           </div>
         );
       case 'vendors':
         return (
-          <div className="grid lg:grid-cols-3 gap-8 mt-8">
-            <div className="lg:col-span-1">
-              <MapView address={address} />
-            </div>
-            <div className="lg:col-span-2">
-              <VendorsSection />
-            </div>
+          <div className="mt-8">
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-purple-600" />
+                    Solar Panel Vendors & Map
+                  </CardTitle>
+                  <CardDescription>
+                    Local solar installers and service area map
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setActiveSection(null)}
+                  className="h-8 w-8"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="grid lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-1">
+                    <MapView address={address} />
+                  </div>
+                  <div className="lg:col-span-2">
+                    <VendorsSection />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         );
       default:
